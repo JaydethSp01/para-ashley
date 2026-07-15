@@ -113,7 +113,8 @@
   .kicker{font-family:'Fraunces',serif;font-weight:300;letter-spacing:.5em;text-transform:uppercase;font-size:11px;color:var(--gold-lt);margin-bottom:16px;padding-left:.5em}
   .her-name{font-family:'Pinyon Script',cursive;font-size:clamp(76px,17vw,168px);line-height:.9;color:transparent;
     background:linear-gradient(180deg,#fff6ea 0%,var(--gold-lt) 44%,var(--gold) 76%,#b07d1f 100%);
-    -webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 6px 26px rgba(217,164,65,.28));margin:4px 0 8px}
+    -webkit-background-clip:text;background-clip:text;margin:4px 0 8px;animation:namesheen 5s ease-in-out infinite}
+  @keyframes namesheen{0%,100%{filter:drop-shadow(0 6px 26px rgba(217,164,65,.28))}50%{filter:drop-shadow(0 6px 36px rgba(240,211,138,.55))}}
   .hero-sub{font-family:'Fraunces',serif;font-style:italic;font-weight:300;font-size:clamp(19px,3.4vw,28px);color:var(--blush)}
   .divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:34px auto 0;opacity:.92}
   .divider .line{height:1px;width:60px;background:linear-gradient(90deg,transparent,var(--gold))}
@@ -523,7 +524,7 @@
   function P(b){this.once=b;this.x=Math.random()*W;this.y=b?(H*0.5+Math.random()*H*0.5):(H+20+Math.random()*H);this.s=6+Math.random()*(b?12:10);this.vy=-((b?2.1:.5)+Math.random()*1.5);this.vx=(Math.random()-.5)*(b?2.4:1.1);this.a=Math.random()*6.28;this.va=(Math.random()-.5)*(b?.1:.06);this.col=cols[Math.random()*cols.length|0];this.o=.5+Math.random()*.45;this.sw=.55+Math.random()*.5}
   P.prototype.step=function(){this.x+=this.vx;this.y+=this.vy;this.a+=this.va;this.vx+=Math.sin(this.y*.01)*.008;if(this.once)this.vy*=.99;if(this.y<-30){if(this.once){this.dead=true;}else{this.y=H+20;this.x=Math.random()*W;this.vy=-(.5+Math.random()*1.2);}}};
   P.prototype.draw=function(){px.save();px.translate(this.x,this.y);px.rotate(this.a);px.globalAlpha=this.o;px.fillStyle=this.col;px.beginPath();const s=this.s,w=s*this.sw;px.moveTo(0,-s);px.bezierCurveTo(w,-s*.4,w,s*.5,0,s);px.bezierCurveTo(-w,s*.5,-w,-s*.4,0,-s);px.fill();px.restore()};
-  const N=reduce?22:(innerWidth<640?38:56);for(let i=0;i<N;i++)ps.push(new P(false));
+  const N=reduce?30:(innerWidth<640?70:100);for(let i=0;i<N;i++){const p=new P(false);p.y=Math.random()*H;ps.push(p);}
   window.burstPetals=function(n){n=n||54;for(let i=0;i<n;i++)ps.push(new P(true))};
   function drawStars(){
     sx.clearRect(0,0,W,H);
