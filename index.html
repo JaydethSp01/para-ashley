@@ -185,6 +185,9 @@
   .foot{text-align:center;margin-top:52px}
   .foot .hb{width:38px;color:var(--rose);animation:beat 1.6s ease-in-out infinite}
   .foot p{color:#c9a9b4;font-family:'Caveat';font-size:20px;margin-top:16px}
+  .replay{display:inline-flex;align-items:center;gap:9px;margin-top:26px;padding:13px 26px;border-radius:30px;font-family:'Cormorant Garamond';font-style:italic;font-size:17px;letter-spacing:.03em;color:var(--gold-lt);background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(217,126,147,.07));border:1px solid rgba(217,164,65,.5);cursor:pointer;transition:transform .3s ease,border-color .3s ease,background .3s ease}
+  .replay:hover{transform:translateY(-2px);border-color:rgba(240,211,138,.9);background:rgba(217,164,65,.12)}
+  .replay svg{width:15px;height:15px}
 
   /* fixed floral corners */
   .corner{position:fixed;z-index:5;pointer-events:none;width:clamp(150px,24vw,280px);height:auto;opacity:.9}
@@ -505,6 +508,7 @@
   <div class="foot">
     <svg class="hb" viewBox="0 0 32 29" fill="currentColor" aria-hidden="true"><path d="M16 29S1.6 19.5 1.6 9.6C1.6 4.3 5.7.7 10.2.7c3 0 5 1.7 5.8 3.3C16.9 2.4 18.9.7 21.8.7c4.5 0 8.6 3.6 8.6 8.9C30.4 19.5 16 29 16 29z"/></svg>
     <p>Guárdala. Vuelve a ella cada vez que lo necesites. 🌸</p>
+    <button class="replay" id="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/></svg>Volver a vivir nuestra historia</button>
   </div>
 </main>
 
@@ -644,6 +648,9 @@
   }
   upd();setInterval(upd,1000);
 })();
+
+/* ---------- volver a vivir la historia ---------- */
+(function(){const b=document.getElementById('replay');if(b)b.addEventListener('click',()=>{try{location.reload();}catch(e){location.href=location.href;}});})();
 
 /* ---------- galeria "Nuestro viaje" (videos) ---------- */
 (function(){
