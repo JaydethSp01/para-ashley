@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Para Ashley 🌸</title>
 <meta name="description" content="Una carta para ti, mi musa.">
+<meta name="theme-color" content="#170610">
+<meta property="og:title" content="Para ti, mi reina 🌹">
+<meta property="og:description" content="Abre las flores… tengo algo que decirte.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%B9%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
@@ -36,6 +41,23 @@
   @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
   @keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.2)}28%{transform:scale(1)}42%{transform:scale(1.13)}}
   @keyframes twinkle{0%,100%{opacity:0;transform:scale(.25)}50%{opacity:1;transform:scale(1)}}
+  @keyframes eq{0%,100%{height:5px}50%{height:17px}}
+
+  .vignette{position:fixed;inset:0;pointer-events:none;z-index:44;background:radial-gradient(125% 95% at 50% 22%, transparent 58%, rgba(9,2,7,.42) 100%)}
+
+  .music-btn{position:fixed;top:16px;right:16px;z-index:70;width:48px;height:48px;border-radius:50%;
+    background:rgba(40,10,25,.5);backdrop-filter:blur(6px);border:1px solid rgba(240,211,138,.5);
+    display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:15px 0;cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,.4);transition:transform .3s ease,opacity .8s ease;opacity:0}
+  body.revealed .music-btn{opacity:1}
+  .music-btn:hover{transform:scale(1.08)}
+  .music-btn .bar{width:3px;height:6px;background:var(--gold-lt);border-radius:2px;transition:height .3s}
+  .music-btn.playing .bar{animation:eq .9s ease-in-out infinite}
+  .music-btn.playing .bar:nth-child(2){animation-delay:.25s}
+  .music-btn.playing .bar:nth-child(3){animation-delay:.45s}
+  .music-btn.paused .bar{height:5px;opacity:.55}
+  .music-btn.paused::after{content:"";position:absolute;width:2px;height:30px;background:var(--gold-lt);transform:rotate(45deg);border-radius:2px;opacity:.75}
+  .vol-hint{font-family:'Cormorant Garamond';font-style:italic;font-size:14px;color:#c9a9b4;margin-top:12px;opacity:0;animation:fadeUp 1.4s ease 3.6s forwards}
 
   /* ===== GATE : blooming bouquet ===== */
   .gate{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -235,6 +257,9 @@
 </svg>
 
 <canvas id="petals"></canvas>
+<div class="vignette"></div>
+<audio id="song" src="cancion.mp3" loop preload="auto"></audio>
+<button class="music-btn paused" id="music" aria-label="Música"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button>
 
 <svg class="corner tl" viewBox="0 0 200 200" aria-hidden="true"><g transform="translate(64 74)"><use href="#cluster"/></g></svg>
 <svg class="corner br" viewBox="0 0 200 200" aria-hidden="true"><g transform="translate(64 74)"><use href="#cluster"/></g></svg>
@@ -330,6 +355,7 @@
     <g transform="translate(700 460)"><path class="spark" style="animation-delay:3s" d="M0-6 1.3-1.3 6 0 1.3 1.3 0 6-1.3 1.3-6 0-1.3-1.3Z" fill="#ffe9b0"/></g>
   </svg>
   <div class="intro-prompt">toca las flores para abrir tu carta</div>
+  <div class="vol-hint">🔊 sube el volumen…</div>
 </div>
 
 <!-- ===== STAGE ===== -->
@@ -410,9 +436,15 @@
 })();
 (function(){
   const gate=document.getElementById('gate'),body=document.body,root=document.documentElement;let opened=false;
-  root.style.overflow='hidden';window.scrollTo(0,0);         /* lock scroll on the gate, start at top */
+  const audio=document.getElementById('song'),mbtn=document.getElementById('music');
+  audio.volume=0;
+  function setBtn(p){mbtn.classList.toggle('playing',p);mbtn.classList.toggle('paused',!p)}
+  function fadeIn(){let v=0;const t=setInterval(()=>{v=Math.min(.7,v+.05);audio.volume=v;if(v>=.7)clearInterval(t)},120)}
+  function playMusic(){audio.play().then(()=>{fadeIn();setBtn(true)}).catch(()=>setBtn(false))}
+  mbtn.addEventListener('click',e=>{e.stopPropagation();if(audio.paused){audio.volume=.7;playMusic()}else{audio.pause();setBtn(false)}});
+  root.style.overflow='hidden';window.scrollTo(0,0);
   window.addEventListener('load',()=>window.scrollTo(0,0));
-  function open(){if(opened)return;opened=true;window.scrollTo(0,0);
+  function open(){if(opened)return;opened=true;window.scrollTo(0,0);playMusic();
     gate.classList.add('exit');if(window.burstPetals)window.burstPetals();
     setTimeout(()=>{gate.classList.add('open');body.classList.add('revealed');root.style.overflow='';window.scrollTo(0,0);},760);
     setTimeout(()=>{gate.remove();window.scrollTo(0,0);},2100);}
