@@ -82,7 +82,19 @@
     filter:drop-shadow(0 44px 66px rgba(0,0,0,.55));
     transition:transform 1.1s cubic-bezier(.5,0,.2,1),opacity 1s ease,filter 1s ease}
   .spark{transform-box:fill-box;transform-origin:center;opacity:0;animation:twinkle 2.6s ease-in-out infinite}
-  .gate.exit .bouquet{transform:scale(1.5) translateY(-4%);opacity:0;filter:blur(9px) drop-shadow(0 0 40px rgba(217,126,147,.6))}
+  .gate.exit .bouquet{transform:scale(1.85) translateY(-6%) rotate(4deg);opacity:0;filter:blur(14px) drop-shadow(0 0 50px rgba(240,180,150,.7));transition:transform 1.3s cubic-bezier(.4,0,.2,1),opacity 1.1s ease,filter 1.1s ease}
+  .gate.exit .intro-tag,.gate.exit .now-playing,.gate.exit .intro-prompt,.gate.exit .vol-hint{opacity:0;transition:opacity .5s ease}
+  /* destello dorado */
+  .bloomflash{position:absolute;left:50%;top:44%;width:min(760px,94vw);aspect-ratio:1;transform:translate(-50%,-50%) scale(.15);border-radius:50%;pointer-events:none;z-index:5;opacity:0;
+    background:radial-gradient(circle, rgba(255,244,214,.95), rgba(244,186,150,.55) 32%, rgba(217,126,147,.25) 58%, transparent 72%);filter:blur(6px)}
+  .gate.burst .bloomflash{animation:bloomflash 1.6s ease-out forwards}
+  @keyframes bloomflash{0%{opacity:0;transform:translate(-50%,-50%) scale(.12)}16%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(2.6)}}
+  /* ondas expansivas */
+  .ripple{position:absolute;left:50%;top:44%;width:80px;height:80px;border-radius:50%;border:2px solid rgba(240,211,138,.7);transform:translate(-50%,-50%) scale(0);opacity:0;pointer-events:none;z-index:5}
+  .gate.burst .ripple{animation:ripple 1.5s cubic-bezier(.2,.7,.3,1) forwards}
+  .gate.burst .ripple.r2{animation-delay:.16s;border-color:rgba(244,194,200,.6)}
+  .gate.burst .ripple.r3{animation-delay:.34s;border-color:rgba(255,244,214,.5)}
+  @keyframes ripple{0%{opacity:.85;transform:translate(-50%,-50%) scale(0)}70%{opacity:.35}100%{opacity:0;transform:translate(-50%,-50%) scale(13)}}
   .intro-prompt{position:relative;z-index:3;font-family:'Caveat',cursive;font-weight:500;
     font-size:clamp(21px,4vw,28px);color:var(--blush);opacity:0;animation:fadeUp 1.4s ease 3.2s forwards;margin-top:2px}
   .intro-prompt::after{content:"";display:block;width:56px;height:1px;margin:12px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
@@ -310,6 +322,8 @@
 <!-- ===== GATE ===== -->
 <div class="gate" id="gate" role="button" tabindex="0" aria-label="Abrir la carta">
   <div class="bg-glow"></div>
+  <div class="bloomflash"></div>
+  <div class="ripple r1"></div><div class="ripple r2"></div><div class="ripple r3"></div>
   <div class="intro-tag">Para ti, mi amor</div>
   <svg class="bouquet" viewBox="0 10 1000 990" aria-hidden="true">
     <ellipse cx="500" cy="912" rx="180" ry="30" fill="rgba(0,0,0,.42)"/>
@@ -506,11 +520,11 @@
     if(W!==prevW||Math.abs(H-prevH)>140||!stars.length){makeStars();prevW=W;prevH=H;}}
   size();addEventListener('resize',size);
   const cols=['#f4c2c8','#e8879b','#f7d5dc','#fceef1','#e6c07a','#dd8ba0'];
-  function P(b){this.x=Math.random()*W;this.y=b?(H*0.55+Math.random()*H*0.5):(H+20+Math.random()*H);this.s=6+Math.random()*10;this.vy=-((b?1.6:.5)+Math.random()*1.2);this.vx=(Math.random()-.5)*1.1;this.a=Math.random()*6.28;this.va=(Math.random()-.5)*.06;this.col=cols[Math.random()*cols.length|0];this.o=.5+Math.random()*.4;this.sw=.55+Math.random()*.5}
-  P.prototype.step=function(){this.x+=this.vx;this.y+=this.vy;this.a+=this.va;this.vx+=Math.sin(this.y*.01)*.008;if(this.y<-30){this.y=H+20;this.x=Math.random()*W;this.vy=-(.5+Math.random()*1.2)}};
+  function P(b){this.once=b;this.x=Math.random()*W;this.y=b?(H*0.5+Math.random()*H*0.5):(H+20+Math.random()*H);this.s=6+Math.random()*(b?12:10);this.vy=-((b?2.1:.5)+Math.random()*1.5);this.vx=(Math.random()-.5)*(b?2.4:1.1);this.a=Math.random()*6.28;this.va=(Math.random()-.5)*(b?.1:.06);this.col=cols[Math.random()*cols.length|0];this.o=.5+Math.random()*.45;this.sw=.55+Math.random()*.5}
+  P.prototype.step=function(){this.x+=this.vx;this.y+=this.vy;this.a+=this.va;this.vx+=Math.sin(this.y*.01)*.008;if(this.once)this.vy*=.99;if(this.y<-30){if(this.once){this.dead=true;}else{this.y=H+20;this.x=Math.random()*W;this.vy=-(.5+Math.random()*1.2);}}};
   P.prototype.draw=function(){px.save();px.translate(this.x,this.y);px.rotate(this.a);px.globalAlpha=this.o;px.fillStyle=this.col;px.beginPath();const s=this.s,w=s*this.sw;px.moveTo(0,-s);px.bezierCurveTo(w,-s*.4,w,s*.5,0,s);px.bezierCurveTo(-w,s*.5,-w,-s*.4,0,-s);px.fill();px.restore()};
   const N=reduce?22:(innerWidth<640?38:56);for(let i=0;i<N;i++)ps.push(new P(false));
-  window.burstPetals=function(){for(let i=0;i<54;i++)ps.push(new P(true))};
+  window.burstPetals=function(n){n=n||54;for(let i=0;i<n;i++)ps.push(new P(true))};
   function drawStars(){
     sx.clearRect(0,0,W,H);
     for(const s of stars){const a=.22+.78*Math.abs(Math.sin(tick*s.sp+s.ph));
@@ -524,7 +538,7 @@
       if(shoot.life>58||shoot.x>W+40||shoot.y>H+40)shoot=null;}
     sx.globalAlpha=1;
   }
-  function loop(){if(!running)return;tick++;drawStars();px.clearRect(0,0,W,H);for(let i=ps.length-1;i>=0;i--){ps[i].step();ps[i].draw();if(ps.length>150&&ps[i].y>H+30&&i>N)ps.splice(i,1)}requestAnimationFrame(loop)}loop();
+  function loop(){if(!running)return;tick++;drawStars();px.clearRect(0,0,W,H);for(let i=ps.length-1;i>=0;i--){ps[i].step();if(ps[i].dead){ps.splice(i,1);continue;}ps[i].draw();}requestAnimationFrame(loop)}loop();
   document.addEventListener('visibilitychange',()=>{running=!document.hidden;if(running)loop()});
 })();
 (function(){
@@ -588,12 +602,14 @@
   root.style.overflow='hidden';window.scrollTo(0,0);
   window.addEventListener('load',()=>window.scrollTo(0,0));
   function open(){if(opened)return;opened=true;window.scrollTo(0,0);startMusic();
-    gate.classList.add('live');if(window.burstPetals)window.burstPetals();   /* la musica suena aqui un momento */
+    gate.classList.add('live');if(window.burstPetals)window.burstPetals(34);   /* la musica suena aqui un momento */
     setTimeout(()=>{
-      gate.classList.add('exit');
-      setTimeout(()=>{gate.classList.add('open');body.classList.add('revealed');root.style.overflow='';window.scrollTo(0,0);},760);
-      setTimeout(()=>{gate.remove();window.scrollTo(0,0);},2100);
-    },2500);}
+      gate.classList.add('burst');                                    /* destello + ondas */
+      if(window.burstPetals)window.burstPetals(130);                  /* tormenta de petalos */
+      setTimeout(()=>gate.classList.add('exit'),150);                 /* el ramo se deshace tras el destello */
+      setTimeout(()=>{gate.classList.add('open');body.classList.add('revealed');root.style.overflow='';window.scrollTo(0,0);},1050);
+      setTimeout(()=>{gate.remove();window.scrollTo(0,0);},2400);
+    },2300);}
   gate.addEventListener('click',open);
   gate.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
 })();
