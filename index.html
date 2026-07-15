@@ -484,7 +484,10 @@
     raf=requestAnimationFrame(dj);
   }
   function startMusic(){
-    buildGraph();audio.muted=false;const p=audio.play();if(p&&p.catch)p.catch(()=>{});
+    buildGraph();audio.muted=false;
+    try{audio.currentTime=27;}catch(e){}          /* arranca en 0:27, el pedazo bueno */
+    const p=audio.play();if(p&&p.catch)p.catch(()=>{});
+    try{audio.currentTime=27;}catch(e){}
     cur=0;djOn=true;setBtn(true);
     if(useWA){ctx.resume&&ctx.resume();const t=ctx.currentTime;   /* "se abre la puerta": barrido de filtro */
       filter.frequency.cancelScheduledValues(t);
