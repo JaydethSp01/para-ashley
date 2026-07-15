@@ -437,14 +437,60 @@
 (function(){
   const gate=document.getElementById('gate'),body=document.body,root=document.documentElement;let opened=false;
   const audio=document.getElementById('song'),mbtn=document.getElementById('music');
-  audio.volume=0;
+  const BASE=.5, LV_HERO=.66, LV_SONG=.84, LV_SIG=.9;
+  let ctx=null,gainNode=null,filter=null,useWA=false,djOn=false,cur=0,target=BASE,raf=0,keys=[];
+
+  /* la pista corre desde que ella entra (silenciada, en posición) */
+  audio.loop=true;audio.muted=true;
+  const auto=()=>audio.play().catch(()=>{});auto();window.addEventListener('load',auto);
+
   function setBtn(p){mbtn.classList.toggle('playing',p);mbtn.classList.toggle('paused',!p)}
-  function fadeIn(){let v=0;const t=setInterval(()=>{v=Math.min(.7,v+.05);audio.volume=v;if(v>=.7)clearInterval(t)},120)}
-  function playMusic(){audio.play().then(()=>{fadeIn();setBtn(true)}).catch(()=>setBtn(false))}
-  mbtn.addEventListener('click',e=>{e.stopPropagation();if(audio.paused){audio.volume=.7;playMusic()}else{audio.pause();setBtn(false)}});
+  function buildGraph(){
+    if(ctx)return;
+    try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw 0;
+      ctx=new AC();
+      const src=ctx.createMediaElementSource(audio);
+      filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=440;filter.Q.value=.5;
+      gainNode=ctx.createGain();gainNode.gain.value=0;
+      src.connect(filter);filter.connect(gainNode);gainNode.connect(ctx.destination);
+      useWA=true;
+    }catch(e){useWA=false;}
+  }
+  function collectKeys(){keys=[['.hero',LV_HERO],['.song',LV_SONG],['.sig-block',LV_SIG]]
+    .map(([s,lv])=>({el:document.querySelector(s),lv})).filter(o=>o.el);}
+  function computeTarget(){
+    const c=window.scrollY+innerHeight/2;let t=BASE;
+    for(const{el,lv} of keys){const r=el.getBoundingClientRect();
+      const top=r.top+window.scrollY-140,bot=r.bottom+window.scrollY+140;
+      if(c>=top&&c<=bot)t=Math.max(t,lv);}
+    return t;
+  }
+  function dj(){
+    if(!djOn){cancelAnimationFrame(raf);return;}
+    if(!keys.length)collectKeys();
+    target=computeTarget();
+    cur+=(target-cur)*.035;                       /* riding the fader, smooth */
+    if(useWA&&gainNode)gainNode.gain.value=cur; else audio.volume=Math.max(0,Math.min(1,cur));
+    raf=requestAnimationFrame(dj);
+  }
+  function startMusic(){
+    buildGraph();audio.muted=false;const p=audio.play();if(p&&p.catch)p.catch(()=>{});
+    cur=0;djOn=true;setBtn(true);
+    if(useWA){ctx.resume&&ctx.resume();const t=ctx.currentTime;   /* "se abre la puerta": barrido de filtro */
+      filter.frequency.cancelScheduledValues(t);
+      filter.frequency.setValueAtTime(440,t);
+      filter.frequency.exponentialRampToValueAtTime(18000,t+2.6);
+    }else{audio.volume=0;}
+    cancelAnimationFrame(raf);dj();
+  }
+  function pauseMusic(){audio.pause();djOn=false;setBtn(false)}
+  function resumeMusic(){audio.muted=false;audio.play().catch(()=>{});if(ctx&&ctx.resume)ctx.resume();djOn=true;setBtn(true);dj()}
+  mbtn.addEventListener('click',e=>{e.stopPropagation();if(audio.paused||!djOn)resumeMusic();else pauseMusic();});
+  window.addEventListener('resize',()=>{keys=[]});
+
   root.style.overflow='hidden';window.scrollTo(0,0);
   window.addEventListener('load',()=>window.scrollTo(0,0));
-  function open(){if(opened)return;opened=true;window.scrollTo(0,0);playMusic();
+  function open(){if(opened)return;opened=true;window.scrollTo(0,0);startMusic();
     gate.classList.add('exit');if(window.burstPetals)window.burstPetals();
     setTimeout(()=>{gate.classList.add('open');body.classList.add('revealed');root.style.overflow='';window.scrollTo(0,0);},760);
     setTimeout(()=>{gate.remove();window.scrollTo(0,0);},2100);}
