@@ -185,6 +185,37 @@
     .hero{min-height:84vh}
   }
   @media(prefers-reduced-motion:reduce){*{animation-duration:.001s!important;animation-iteration-count:1!important}}
+
+  /* ===== cielo estrellado ===== */
+  #stars{position:fixed;inset:0;pointer-events:none;z-index:1}
+
+  /* ===== contador de aniversario ===== */
+  .timecount{max-width:760px;margin:126px auto 0;padding:0 20px;text-align:center;position:relative;z-index:10}
+  .tc-title{font-family:'Pinyon Script',cursive;font-size:clamp(42px,8vw,66px);line-height:1;color:transparent;background:linear-gradient(180deg,#fff6ea,var(--gold-lt) 58%,var(--gold));-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 4px 16px rgba(217,164,65,.25))}
+  .tc-sub{font-family:'Cormorant Garamond';font-style:italic;color:var(--blush);font-size:clamp(16px,2.4vw,19px);margin:6px 0 32px}
+  .tc-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+  .tc-cell{min-width:96px;flex:0 0 auto;padding:18px 12px 14px;border-radius:14px;background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(217,126,147,.06));border:1px solid rgba(217,164,65,.28);backdrop-filter:blur(3px)}
+  .tc-cell .n{display:block;font-family:'Fraunces',serif;font-weight:400;font-size:clamp(30px,6vw,44px);color:var(--gold-lt);line-height:1;font-variant-numeric:tabular-nums}
+  .tc-cell .l{display:block;margin-top:7px;font-family:'Cormorant Garamond';font-style:italic;letter-spacing:.16em;text-transform:uppercase;font-size:11px;color:var(--muted)}
+  .tc-foot{margin-top:26px;font-family:'Caveat';font-size:22px;color:var(--blush)}
+  @media(max-width:520px){.tc-cell{min-width:27%;padding:14px 6px}}
+
+  /* ===== nuestro viaje (videos) ===== */
+  .viaje{max-width:920px;margin:120px auto 0;padding:0 18px;position:relative;z-index:10}
+  .v-head{text-align:center;margin-bottom:32px}
+  .v-kicker{font-family:'Fraunces';font-weight:300;letter-spacing:.42em;text-transform:uppercase;font-size:11px;color:var(--gold-lt)}
+  .v-head h3{font-family:'Pinyon Script',cursive;font-weight:400;font-size:clamp(48px,9vw,76px);line-height:1;margin:2px 0;color:transparent;background:linear-gradient(180deg,#fff6ea,var(--gold-lt) 55%,var(--gold));-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 4px 16px rgba(217,164,65,.25))}
+  .v-sub{font-family:'Cormorant Garamond';font-style:italic;color:var(--blush);font-size:clamp(16px,2.4vw,19px)}
+  .v-hero{margin:0 auto 22px;max-width:460px;padding:14px 14px 52px;background:#fdfaf3;border-radius:2px;box-shadow:0 34px 66px rgba(0,0,0,.55);transform:rotate(-2deg);position:relative}
+  .v-hero img{width:100%;display:block;border-radius:1px;filter:saturate(1.04)}
+  .v-hero figcaption{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-family:'Caveat';font-weight:600;font-size:23px;color:#5a4230}
+  .v-grid{columns:2;column-gap:15px}
+  @media(min-width:780px){.v-grid{columns:3}}
+  .v-card{break-inside:avoid;margin:0 0 15px;position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(217,164,65,.32);box-shadow:0 16px 34px rgba(0,0,0,.45);cursor:pointer;background:#12060e}
+  .v-card video{width:100%;display:block;border-radius:14px}
+  .v-card .hint{position:absolute;bottom:9px;right:9px;padding:5px 10px;border-radius:20px;background:rgba(20,6,14,.6);backdrop-filter:blur(4px);border:1px solid rgba(240,211,138,.4);color:var(--gold-lt);font-family:'Cormorant Garamond';font-style:italic;font-size:13px;transition:opacity .4s ease;pointer-events:none}
+  .v-card.sounding .hint{opacity:0}
+  .v-card.sounding{border-color:rgba(240,211,138,.85);box-shadow:0 16px 40px rgba(217,126,147,.35)}
 </style>
 </head>
 <body>
@@ -265,6 +296,7 @@
   </defs>
 </svg>
 
+<canvas id="stars"></canvas>
 <canvas id="petals"></canvas>
 <div class="vignette"></div>
 <audio id="song" src="cancion.mp3" loop preload="auto"></audio>
@@ -424,6 +456,35 @@
     </div>
   </article>
 
+  <section class="timecount reveal">
+    <div class="tc-title">Nuestro tiempo juntos</div>
+    <div class="tc-sub">desde el 4 de junio de 2026, la noche que bailamos</div>
+    <div class="tc-grid" id="counter">
+      <div class="tc-cell"><span class="n" data-k="mo">0</span><span class="l">meses</span></div>
+      <div class="tc-cell"><span class="n" data-k="d">0</span><span class="l">días</span></div>
+      <div class="tc-cell"><span class="n" data-k="h">0</span><span class="l">horas</span></div>
+      <div class="tc-cell"><span class="n" data-k="mi">0</span><span class="l">min</span></div>
+      <div class="tc-cell"><span class="n" data-k="s">0</span><span class="l">seg</span></div>
+    </div>
+    <div class="tc-foot">…y contando 🤍</div>
+  </section>
+
+  <section class="viaje reveal">
+    <div class="v-head">
+      <div class="v-kicker">lo que hemos vivido</div>
+      <h3>Nuestro viaje</h3>
+      <div class="v-sub">pruebas de que esto es de verdad</div>
+    </div>
+    <figure class="v-hero"><img src="nosotros.jpg" alt="Nosotros"><figcaption>nosotros 🤍</figcaption></figure>
+    <div class="v-grid" id="vgrid">
+      <div class="v-card"><video src="v1.mp4" muted loop playsinline preload="none"></video><span class="hint">🔊 toca para oír</span></div>
+      <div class="v-card"><video src="v3.mp4" muted loop playsinline preload="none"></video><span class="hint">🔊 toca para oír</span></div>
+      <div class="v-card"><video src="v2.mp4" muted loop playsinline preload="none"></video><span class="hint">🔊 toca para oír</span></div>
+      <div class="v-card"><video src="v5.mp4" muted loop playsinline preload="none"></video><span class="hint">🔊 toca para oír</span></div>
+      <div class="v-card"><video src="v4.mp4" muted loop playsinline preload="none"></video><span class="hint">🔊 toca para oír</span></div>
+    </div>
+  </section>
+
   <div class="foot">
     <svg class="hb" viewBox="0 0 32 29" fill="currentColor" aria-hidden="true"><path d="M16 29S1.6 19.5 1.6 9.6C1.6 4.3 5.7.7 10.2.7c3 0 5 1.7 5.8 3.3C16.9 2.4 18.9.7 21.8.7c4.5 0 8.6 3.6 8.6 8.9C30.4 19.5 16 29 16 29z"/></svg>
     <p>Guárdala. Vuelve a ella cada vez que lo necesites. 🌸</p>
@@ -432,16 +493,33 @@
 
 <script>
 (function(){
-  const c=document.getElementById('petals'),x=c.getContext('2d');let W,H,ps=[],running=true;
+  const pc=document.getElementById('petals'),px=pc.getContext('2d');
+  const sc=document.getElementById('stars'),sx=sc.getContext('2d');
+  let W,H,ps=[],stars=[],running=true,tick=0,shoot=null,nextShoot=380;
   const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  function size(){W=c.width=innerWidth;H=c.height=innerHeight}size();addEventListener('resize',size);
+  function makeStars(){stars=[];const n=Math.min(150,Math.round(W*H/8200));
+    for(let i=0;i<n;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:.4+Math.random()*1.5,ph:Math.random()*6.28,sp:.012+Math.random()*.03,gold:Math.random()<.22});}
+  function size(){W=pc.width=sc.width=innerWidth;H=pc.height=sc.height=innerHeight;makeStars();}size();addEventListener('resize',size);
   const cols=['#f4c2c8','#e8879b','#f7d5dc','#fceef1','#e6c07a','#dd8ba0'];
   function P(b){this.x=Math.random()*W;this.y=b?(H*0.55+Math.random()*H*0.5):(H+20+Math.random()*H);this.s=6+Math.random()*10;this.vy=-((b?1.6:.5)+Math.random()*1.2);this.vx=(Math.random()-.5)*1.1;this.a=Math.random()*6.28;this.va=(Math.random()-.5)*.06;this.col=cols[Math.random()*cols.length|0];this.o=.5+Math.random()*.4;this.sw=.55+Math.random()*.5}
   P.prototype.step=function(){this.x+=this.vx;this.y+=this.vy;this.a+=this.va;this.vx+=Math.sin(this.y*.01)*.008;if(this.y<-30){this.y=H+20;this.x=Math.random()*W;this.vy=-(.5+Math.random()*1.2)}};
-  P.prototype.draw=function(){x.save();x.translate(this.x,this.y);x.rotate(this.a);x.globalAlpha=this.o;x.fillStyle=this.col;x.beginPath();const s=this.s,w=s*this.sw;x.moveTo(0,-s);x.bezierCurveTo(w,-s*.4,w,s*.5,0,s);x.bezierCurveTo(-w,s*.5,-w,-s*.4,0,-s);x.fill();x.restore()};
+  P.prototype.draw=function(){px.save();px.translate(this.x,this.y);px.rotate(this.a);px.globalAlpha=this.o;px.fillStyle=this.col;px.beginPath();const s=this.s,w=s*this.sw;px.moveTo(0,-s);px.bezierCurveTo(w,-s*.4,w,s*.5,0,s);px.bezierCurveTo(-w,s*.5,-w,-s*.4,0,-s);px.fill();px.restore()};
   const N=reduce?22:(innerWidth<640?38:56);for(let i=0;i<N;i++)ps.push(new P(false));
   window.burstPetals=function(){for(let i=0;i<54;i++)ps.push(new P(true))};
-  function loop(){if(!running)return;x.clearRect(0,0,W,H);for(let i=ps.length-1;i>=0;i--){ps[i].step();ps[i].draw();if(ps.length>150&&ps[i].y>H+30&&i>N)ps.splice(i,1)}requestAnimationFrame(loop)}loop();
+  function drawStars(){
+    sx.clearRect(0,0,W,H);
+    for(const s of stars){const a=.22+.78*Math.abs(Math.sin(tick*s.sp+s.ph));
+      sx.globalAlpha=a;sx.fillStyle=s.gold?'#f0d38a':'#fff6ea';
+      sx.beginPath();sx.arc(s.x,s.y,s.r,0,6.283);sx.fill();
+      if(s.r>1.05){sx.globalAlpha=a*.45;sx.fillRect(s.x-s.r*2.6,s.y-.35,s.r*5.2,.7);sx.fillRect(s.x-.35,s.y-s.r*2.6,.7,s.r*5.2);}}
+    if(!shoot){if(!reduce&&--nextShoot<=0){shoot={x:Math.random()*W*.6,y:Math.random()*H*.28,vx:7+Math.random()*4,vy:2.4+Math.random()*1.8,life:0};nextShoot=520+Math.random()*760;}}
+    else{shoot.x+=shoot.vx;shoot.y+=shoot.vy;shoot.life++;
+      sx.globalAlpha=Math.max(0,.85-shoot.life/58);sx.strokeStyle='#fff6ea';sx.lineWidth=2;sx.lineCap='round';
+      sx.beginPath();sx.moveTo(shoot.x,shoot.y);sx.lineTo(shoot.x-shoot.vx*9,shoot.y-shoot.vy*9);sx.stroke();
+      if(shoot.life>58||shoot.x>W+40||shoot.y>H+40)shoot=null;}
+    sx.globalAlpha=1;
+  }
+  function loop(){if(!running)return;tick++;drawStars();px.clearRect(0,0,W,H);for(let i=ps.length-1;i>=0;i--){ps[i].step();ps[i].draw();if(ps.length>150&&ps[i].y>H+30&&i>N)ps.splice(i,1)}requestAnimationFrame(loop)}loop();
   document.addEventListener('visibilitychange',()=>{running=!document.hidden;if(running)loop()});
 })();
 (function(){
@@ -500,6 +578,7 @@
   function resumeMusic(){audio.muted=false;audio.play().catch(()=>{});if(ctx&&ctx.resume)ctx.resume();djOn=true;setBtn(true);dj()}
   mbtn.addEventListener('click',e=>{e.stopPropagation();if(audio.paused||!djOn)resumeMusic();else pauseMusic();});
   window.addEventListener('resize',()=>{keys=[]});
+  window.__pauseMusic=pauseMusic;window.__resumeMusic=function(){if(audio.paused||!djOn)resumeMusic();};
 
   root.style.overflow='hidden';window.scrollTo(0,0);
   window.addEventListener('load',()=>window.scrollTo(0,0));
@@ -512,6 +591,41 @@
     },2500);}
   gate.addEventListener('click',open);
   gate.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+})();
+
+/* ---------- contador de aniversario ---------- */
+(function(){
+  const el=document.getElementById('counter');if(!el)return;
+  const START=new Date(2026,5,4,19,3,0);           /* 4 de junio de 2026, 7:03 p.m. */
+  const set=(k,v)=>{const n=el.querySelector('[data-k="'+k+'"]');if(n&&n.textContent!=v)n.textContent=v;};
+  function upd(){
+    const now=new Date();if(now<START){set('mo',0);set('d',0);set('h',0);set('mi',0);set('s',0);return;}
+    let y=now.getFullYear()-START.getFullYear(),mo=now.getMonth()-START.getMonth(),d=now.getDate()-START.getDate(),
+        h=now.getHours()-START.getHours(),mi=now.getMinutes()-START.getMinutes(),s=now.getSeconds()-START.getSeconds();
+    if(s<0){s+=60;mi--;}if(mi<0){mi+=60;h--;}if(h<0){h+=24;d--;}
+    if(d<0){d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();mo--;}
+    if(mo<0){mo+=12;y--;}
+    set('mo',y*12+mo);set('d',d);set('h',h);set('mi',mi);set('s',s);
+  }
+  upd();setInterval(upd,1000);
+})();
+
+/* ---------- galeria "Nuestro viaje" (videos) ---------- */
+(function(){
+  const grid=document.getElementById('vgrid');if(!grid)return;
+  const cards=[].slice.call(grid.querySelectorAll('.v-card'));let current=null;
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{const v=e.target;
+    if(e.isIntersecting){if(v.preload==='none')v.preload='auto';v.play&&v.play().catch(()=>{});}
+    else{v.pause&&v.pause();
+      if(current&&current.querySelector('video')===v){v.muted=true;current.classList.remove('sounding');current=null;if(window.__resumeMusic)window.__resumeMusic();}}
+  })},{threshold:.4});
+  cards.forEach(card=>{const v=card.querySelector('video');io.observe(v);
+    card.addEventListener('click',()=>{
+      if(current===card){v.muted=true;card.classList.remove('sounding');current=null;if(window.__resumeMusic)window.__resumeMusic();}
+      else{if(current){const cv=current.querySelector('video');cv.muted=true;current.classList.remove('sounding');}
+        v.muted=false;v.play().catch(()=>{});card.classList.add('sounding');current=card;if(window.__pauseMusic)window.__pauseMusic();}
+    });
+  });
 })();
 </script>
 </body>
